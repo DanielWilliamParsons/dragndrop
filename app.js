@@ -1,7 +1,17 @@
 window.addEventListener('load', () => {
 
+    /**
+     * TO DO
+     * Recompose into a class
+     * Recompose into a React element
+     * Once all slots are filled, recreate a new acceptor div with 5 new slots
+     * and highlight the acceptor div as "complete"
+     * Be able to remove draggables from a droppable
+     * Figure out passing data to a curriculum model
+     */
+
     const draggables = Array.from(document.querySelectorAll('.draggable'));
-    const acceptor = document.querySelector('#acceptor');
+    const droppables = document.querySelectorAll('.droppable');
 
     // On the drag target
     const dragStart = (e) => {
@@ -13,6 +23,7 @@ window.addEventListener('load', () => {
         // }, 0);
         
     }
+
     draggables.forEach(draggable => {
         draggable.addEventListener('dragstart', dragStart);
     });
@@ -21,42 +32,60 @@ window.addEventListener('load', () => {
     const dragEnter = (e) => {
         console.log(e);
         e.preventDefault();
-        e.target.classList.add('drag-over');
+        if(!e.target.firstChild) {
+            e.target.classList.add('drag-over-safe');
+        } else {
+            e.target.classList.add('drag-over-unsafe');
+        }
+        
     }
 
     const dragOver = (e) => {
         e.preventDefault();
-        e.target.classList.add('drag-over');
+        if(!e.target.firstChild) {
+            e.target.classList.add('drag-over-safe');
+        } else {
+            e.target.classList.add('drag-over-unsafe');
+        }
     }
 
     const dragLeave = (e) => {
         e.preventDefault();
-        e.target.classList.remove('drag-over');
+        e.target.classList.remove('drag-over-safe');
+        e.target.classList.remove('drag-over-unsafe');
     }
 
     const drop = (e) => {
         e.preventDefault();
-        e.target.classList.remove('drag-over');
+        e.target.classList.remove('drag-over-safe');
+        e.target.classList.remove('drag-over-unsafe');
 
-        // get the draggable element
-        const id = e.dataTransfer.getData('text/plain');
-        const draggable = document.getElementById(id);
+        // Check if a child is already appended
+        if(!e.target.firstChild) {
+            // get the draggable element
+            const id = e.dataTransfer.getData('text/plain');
+            const draggable = document.getElementById(id);
 
-        // Clone the element
-        const clonedElement = draggable.cloneNode(true);
-        clonedElement.id = `draggable-${draggables.length + 1}`;
-        clonedElement.addEventListener('dragstart', dragStart);
+            // Clone the element
+            const clonedElement = draggable.cloneNode(true);
+            clonedElement.id = `draggable-${draggables.length + 1}`;
+            clonedElement.addEventListener('dragstart', dragStart);
+            
+            // add it to the drop target
+            e.target.appendChild(clonedElement);
+        }
+
         
-        // add it to the drop target
-        e.target.appendChild(clonedElement);
-
         
     }
 
-    acceptor.addEventListener('dragenter', dragEnter);
-    acceptor.addEventListener('dragover', dragOver);
-    acceptor.addEventListener('dragleave', dragLeave);
-    acceptor.addEventListener('drop', drop);
+    droppables.forEach(droppable => {
+        droppable.addEventListener('dragenter', dragEnter);
+        droppable.addEventListener('dragover', dragOver);
+        droppable.addEventListener('dragleave', dragLeave);
+        droppable.addEventListener('drop', drop);
+    })
+    
 
     // let draggedElement = null;
 

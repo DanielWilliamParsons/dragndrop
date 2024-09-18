@@ -12,6 +12,7 @@
     line-height: 100px;
     border: 1px solid #000;
     cursor: grab;
+    margin: 5px;
 }
 
 .hide {
@@ -20,16 +21,31 @@
 
 .acceptor {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+    align-items: center;
     width: 80%;
     height: 150px;
-    background-color: lightgrey;
+    background-color:cadetblue;
     margin: 100px auto;
-    border: 2px dashed #000;
+    border: 2px #000;
     text-align: center;
     line-height: 150px;
+    border-radius: 15px;
 }
 
-.drag-over {
+.droppable {
+    display: flex;
+    width: 105px;
+    height: 110px;
+    background-color:antiquewhite;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.drag-over-unsafe {
     border: dashed 3px red;
+}
+
+.drag-over-safe {
+    border: dashed 3px green;
 }
