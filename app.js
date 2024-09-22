@@ -15,12 +15,18 @@ window.addEventListener('load', () => {
 
     // On the drag target
     const dragStart = (e) => {
-        console.log("drag starts");
-        e.dataTransfer.setData('text/plain', e.target.id);
+        e.dataTransfer.setData('targetId', e.target.id);
+
+        // Passing the parent node classname allows us to track
+        // whether the draggable is coming OUT of a droppable or not
+        e.dataTransfer.setData('targetParentClass', e.target.parentNode.className);
+        e.dataTransfer.setData('targetParentId', e.target.parentNode.id);
+        
         // The following will make the original element disappear.
         // setTimeout(() => {
         //     e.target.classList.add('hide');
         // }, 0);
+
         
     }
 
@@ -30,7 +36,6 @@ window.addEventListener('load', () => {
 
     // On the drop target
     const dragEnter = (e) => {
-        console.log(e);
         e.preventDefault();
         if(!e.target.firstChild) {
             e.target.classList.add('drag-over-safe');
@@ -53,6 +58,7 @@ window.addEventListener('load', () => {
         e.preventDefault();
         e.target.classList.remove('drag-over-safe');
         e.target.classList.remove('drag-over-unsafe');
+        
     }
 
     const drop = (e) => {
@@ -60,18 +66,37 @@ window.addEventListener('load', () => {
         e.target.classList.remove('drag-over-safe');
         e.target.classList.remove('drag-over-unsafe');
 
-        // Check if a child is already appended
+        /**
+         * CHECK if a child is already appended to the droppable element.
+         * If not, carry out actions to append the draggable to the droppable.
+         */
         if(!e.target.firstChild) {
             // get the draggable element
-            const id = e.dataTransfer.getData('text/plain');
+            const id = e.dataTransfer.getData('targetId');
             const draggable = document.getElementById(id);
 
-            // Clone the element
+            /**
+             * REMOVE ORIGINAL ELEMENT FROM ITS PARENT IF IS WAS IN A DROPPABLE
+             * To remove a draggable from a droppable element
+             * before we drop it, check that the draggable is not a child
+             * of a droppable by using the data that was transfered
+             * If it is a child of a droppable element, remove it from
+             * its parent when dropped.
+             */
+            const originalParentId = e.dataTransfer.getData('targetParentId');
+            const originalParent = document.getElementById(originalParentId);
+            if (originalParent && originalParent.classList.contains('droppable')) {
+                originalParent.removeChild(draggable);
+            }
+
+            /**
+             * CLONE the element so that it can be appended to the droppable.
+             * Add to the draggables array to make sure that ids are correctly updated.
+             */
             const clonedElement = draggable.cloneNode(true);
             clonedElement.id = `draggable-${draggables.length + 1}`;
+            draggables.push(clonedElement);
             clonedElement.addEventListener('dragstart', dragStart);
-            
-            // add it to the drop target
             e.target.appendChild(clonedElement);
         }
 
@@ -84,7 +109,9 @@ window.addEventListener('load', () => {
         droppable.addEventListener('dragover', dragOver);
         droppable.addEventListener('dragleave', dragLeave);
         droppable.addEventListener('drop', drop);
-    })
+    });
+
+    //document.body.addEventListener('drop', drop);
     
 
     // let draggedElement = null;
