@@ -6,7 +6,7 @@ window.addEventListener('load', () => {
      * Recompose into a React element
      * Once all slots are filled, recreate a new acceptor div with 5 new slots
      * and highlight the acceptor div as "complete"
-     * Be able to remove draggables from a droppable
+     * Be able to remove draggables from a droppable - DONE!!!
      * Figure out passing data to a curriculum model
      */
 
@@ -76,7 +76,7 @@ window.addEventListener('load', () => {
             const draggable = document.getElementById(id);
 
             /**
-             * REMOVE ORIGINAL ELEMENT FROM ITS PARENT IF IS WAS IN A DROPPABLE
+             * REMOVE ORIGINAL ELEMENT FROM ITS PARENT IF IT WAS IN A DROPPABLE
              * To remove a draggable from a droppable element
              * before we drop it, check that the draggable is not a child
              * of a droppable by using the data that was transfered
@@ -95,6 +95,26 @@ window.addEventListener('load', () => {
              */
             const clonedElement = draggable.cloneNode(true);
             clonedElement.id = `draggable-${draggables.length + 1}`;
+            
+            /**
+             * ADD a delete button if it doesn't already exist.
+             */
+            if(!clonedElement.childNodes[0].classList.contains('delete-button')) {
+                const deleteButton = document.createElement('button');
+                deleteButton.innerText = "X";
+                deleteButton.className = "delete-button";
+                //deleteButton.addEventListener('click', (e) => deleteThisElement(e)); // deleteButton.addEventListener('click', deleteThisElement(e)) this immediately invokes deleteThisElement which we don't want to do.
+                deleteButton.onclick = function(e) { deleteThisElement(e) };
+                clonedElement.prepend(deleteButton);
+            } else {
+                // We have to add the onclick event listener when cloning to a new droppable
+                // I'm not sure why, but it seems to get lost when we move a draggable from one droppable
+                // to another. It's probably because the original button is removed when cloned
+                // but the event doesn't get cloned.
+                clonedElement.childNodes[0].onclick = function(e) { deleteThisElement(e) };
+            }
+            
+            
             draggables.push(clonedElement);
             clonedElement.addEventListener('dragstart', dragStart);
             e.target.appendChild(clonedElement);
@@ -110,6 +130,13 @@ window.addEventListener('load', () => {
         droppable.addEventListener('dragleave', dragLeave);
         droppable.addEventListener('drop', drop);
     });
+
+    const deleteThisElement = (e) => {
+        console.log(e);
+        const draggable = e.target.parentNode;
+        const droppable = draggable.parentNode;
+        droppable.removeChild(draggable);
+    }
 
     //document.body.addEventListener('drop', drop);
     

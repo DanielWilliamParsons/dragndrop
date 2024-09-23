@@ -9,10 +9,15 @@
     height: 100px;
     background-color: lightblue;
     text-align: center;
-    line-height: 100px;
     border: 1px solid #000;
     cursor: grab;
     margin: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.draggable:active {
+    cursor:grabbing;
 }
 
 .hide {
@@ -29,7 +34,6 @@
     margin: 100px auto;
     border: 2px #000;
     text-align: center;
-    line-height: 150px;
     border-radius: 15px;
 }
 
@@ -38,7 +42,7 @@
     width: 105px;
     height: 110px;
     background-color:antiquewhite;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -48,4 +52,19 @@
 
 .drag-over-safe {
     border: dashed 3px green;
+}
+
+.delete-button {
+    font-size: 15px;
+    top: 0%;
+    width: 2rem;
+    border: none;
+    background-color:antiquewhite;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.delete-button:hover {
+    background-color:aliceblue;
+    cursor:pointer;
 }
